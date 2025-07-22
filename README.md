@@ -3,7 +3,7 @@ https://github.com/Atarione1/backend
 ## Description
 
 backend hecho con prisma y sqlite3
-## asegurese de cambiar el nombre del proyecto a "back" para que funcione correctamente desde el inicio
+## Primero asegurese de cambiar el nombre del proyecto a "back" para que funcione correctamente desde el inicio
 ## Project setup
 
 npm install
