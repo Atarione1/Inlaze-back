@@ -4,13 +4,16 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GetAllProjectsDto } from './dto/getall-project.dto';
 
+// Servicio para manejar la lógica de negocio relacionada con los proyectos
 @Injectable()
 export class ProjectService {
   constructor(private prismaService: PrismaService) {}
+  // Crear un nuevo proyecto
   create(createProjectDto: CreateProjectDto) {
     return this.prismaService.project.create({ data: createProjectDto });
   }
 
+  // Obtener todos los proyectos con paginación y filtrado por nombre
   findAll(query: GetAllProjectsDto) {
     const { name, order } = query;
     const take = query.take ? parseInt(query.take) : 10;
@@ -25,6 +28,7 @@ export class ProjectService {
     return proyectsPaginated;
   }
 
+  // Encontrar un proyecto por su ID
   async findOne(id: number) {
     const projectFound = await this.prismaService.project.findUnique({
       where: {
@@ -37,6 +41,7 @@ export class ProjectService {
     return projectFound;
   }
 
+  // Actualizar un proyecto existente
   async update(id: number, updateProjectDto: UpdateProjectDto) {
     const projectFound = await this.prismaService.project.update({
       where: {
@@ -50,6 +55,7 @@ export class ProjectService {
     return projectFound;
   }
 
+  // Eliminar un proyecto
   async remove(id: number) {
     const projectDelete = await this.prismaService.project.delete({
       where: {

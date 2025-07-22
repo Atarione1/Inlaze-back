@@ -9,6 +9,7 @@ import * as bcryptjs from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 
+// Servicio para manejar la lógica de negocio relacionada con la autenticación
 @Injectable()
 export class AuthService {
   constructor(
@@ -16,6 +17,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  // Método para registrar un nuevo usuario
   async register({ name, password, admin }: RegisterDto) {
     const user = await this.userService.findOneName(name);
     if (user) {
@@ -27,6 +29,8 @@ export class AuthService {
       admin,
     });
   }
+
+  // Método para iniciar sesión un usuario existente
   async login({ name, password }: LoginDto) {
     const user = await this.userService.findOneName(name);
     console.log(user);
@@ -45,6 +49,8 @@ export class AuthService {
       name,
     };
   }
+
+  // Método para validar un token JWT
   validateToken(token: string) {
     return this.jwtService.verify(token, {
       secret: process.env.JWT_SECRET_KEY,

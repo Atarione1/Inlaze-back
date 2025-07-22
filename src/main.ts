@@ -1,3 +1,4 @@
+// Este archivo es el punto de entrada principal de la aplicación
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';

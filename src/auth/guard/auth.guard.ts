@@ -1,54 +1,35 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+// Guard para proteger rutas que requieren autenticación
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
-import { jwtConstants } from '../constants/jwt.constant';
-import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private readonly jwtService: JwtService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
+
+  // Método principal que determina si se permite el acceso a la ruta protegida
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-
-    const { authorization }: any = request.headers;
-    if (!authorization || authorization.trim() === '') {
-      throw new UnauthorizedException('Please provide token');
-    }
-    const authToken = authorization.replace(/bearer/gim, '').trim();
-
-    console.log(authToken);
-    if (!authToken) {
-      throw new UnauthorizedException('No authorization');
+    const request = context.switchToHttp().getRequest<Request>();
+    const token = this.extractTokenFromHeader(request); // Extrae el token del encabezado de la solicitud
+    if (!token) {
+      return false; // Si no hay token, deniega el acceso
     }
     try {
-      const request = context.switchToHttp().getRequest();
-      const { authorization }: any = request.headers;
-      if (!authorization || authorization.trim() === '') {
-        throw new UnauthorizedException('Please provide token');
-      }
-      const authToken = authorization.replace(/bearer/gim, '').trim();
-      const resp = await this.authService.validateToken(authToken);
-      request.user = resp;
-      return true;
-    } catch (error) {
-      console.log('auth error - ', error.message);
-      throw new ForbiddenException(
-        error.message || 'session expired! Please sign In',
-      );
+      // Verifica y decodifica el token utilizando el servicio JWT
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET_KEY, // Clave secreta para verificar el token
+      });
+      // Almacena la información del usuario en el objeto de solicitud
+      request['user'] = payload;
+    } catch {
+      return false; // Si la verificación falla, deniega el acceso
     }
+    return true; // Si todo es válido, permite el acceso
   }
+
+  // Método para extraer el token del encabezado de autorización
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split('') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined; // Devuelve el token si el tipo es "Bearer"
   }
 }

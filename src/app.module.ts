@@ -6,8 +6,15 @@ import { UsersModule } from './users/users.module';
 import { CommentsModule } from './comments/comments.module';
 import { AuthModule } from './auth/auth.module';
 
+// Este archivo define el módulo principal de la aplicación
 @Module({
-  imports: [TasksModule, ProjectModule, UsersModule, CommentsModule, AuthModule],
+  imports: [
+    TasksModule,
+    ProjectModule,
+    UsersModule,
+    CommentsModule,
+    AuthModule,
+  ],
   controllers: [],
   providers: [PrismaService],
 })

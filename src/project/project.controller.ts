@@ -17,6 +17,8 @@ import { GetAllProjectsDto } from './dto/getall-project.dto';
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
+  // Controlador para manejar las operaciones relacionadas con los proyectos
+
   @Post()
   create(@Body() createProjectDto: CreateProjectDto) {
     return this.projectService.create(createProjectDto);

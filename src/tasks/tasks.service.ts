@@ -15,6 +15,7 @@ export class TasksService {
     return this.prismaService.task.findMany();
   }
   async findTasksForProject(project: number) {
+    console.log(project);
     const tasks = await this.prismaService.task.findMany({
       where: {
         projectId: project,
@@ -22,6 +23,7 @@ export class TasksService {
     });
     return tasks;
   }
+  
   async findTasksForProjectAndUser(project: number, user: number) {
     const tasks = await this.prismaService.task.findMany({
       where: {
